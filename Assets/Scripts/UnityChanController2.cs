@@ -26,30 +26,31 @@ public class UnityChanController2 : MonoBehaviour {
 
     // スタート時に呼ばれる
     void Start() {
-        animator = GetComponent<Animator>();
+        this.animator = GetComponent<Animator>();
         this.myrigidbody = GetComponent<Rigidbody>();
 
         this.GoalText = GameObject.Find("GoalText");
         this.gameoverText = GameObject.Find("GameOverText");
 
         this.TimeText = GameObject.Find("TimeText");
-        this.TimeText.GetComponent<Text>().text = "残り時間: " + countdown;
+        this.TimeText.GetComponent<Text>().text = "残り時間: " + countdown + "秒";
     }
 
     // フレーム毎に呼ばれる
     void Update() {
-
         this.delta += Time.deltaTime;
-
+        
         //ゲームオーバーになっていない時
-        if (is_gameover == false) {
+        if (is_gameover == false && is_goal == false) {
 
             // 上矢印キーで前進
             if (Input.GetKey("up")) {
                 transform.position += transform.forward * 0.03f;
                 animator.SetBool("is_running", true);
+                
             }else {
                 animator.SetBool("is_running", false);
+                
             }
 
             // 左右矢印キーで左右回転
@@ -61,22 +62,23 @@ public class UnityChanController2 : MonoBehaviour {
 
             //spaceキーを押す、かつ接地状態でジャンプ
             if (Input.GetKeyDown(KeyCode.Space) && is_Ground == true) {
-                animator.SetBool("is_jumping", true);
-
+                is_Ground = false;
+                this.animator.SetBool("is_jumping", true);
+                
                 //上方向に速度を与える。
                 this.myrigidbody.velocity = new Vector3(0, jumpspeed, 0);
-
-                is_Ground = false;
-                animator.SetBool("is_jumping", false);
+            }
+            else {
+                this.animator.SetBool("is_jumping", false);
             }
 
-            //ゴールしていない時、テキストに残り時間を表示
+
+            // ゴールしていない時、テキストに残り時間を表示
             if (is_goal == false) {
                 this.time = countdown - delta;
                 this.TimeText.GetComponent<Text>().text = "残り: " + time.ToString("F1") + "秒";
             }
         }
-
         //リターンキーで操作説明シーンに遷移
         if (Input.GetKeyDown(KeyCode.Return)) {
             SceneManager.LoadScene("Explanation");
@@ -98,12 +100,15 @@ public class UnityChanController2 : MonoBehaviour {
         }
 
         //制限時間内かつゴールに到達できた時
-        if (delta <= countdown && other.gameObject.tag == "GoalTag") {
+        if (delta < 30f && other.gameObject.tag == "GoalTag") {
             is_goal = true;
             //Goalと表示
             this.GoalText.GetComponent<Text>().text = "Clear !!";
-            //制限時間オーバーもしくはPlainオブジェクトに接地した時
-        }else if (delta > countdown|| other.gameObject.tag == "PlainTag") {
+            // パーティクルを再生
+            GetComponent<ParticleSystem>().Play();
+        }
+        //制限時間オーバーもしくはPlainオブジェクトに接地した時
+        else if (time == 0f|| other.gameObject.tag == "PlainTag") {
             is_gameover = true;
             //テキストにゲームオーバーと表示
             this.gameoverText.GetComponent<Text>().text = "Game Over ";

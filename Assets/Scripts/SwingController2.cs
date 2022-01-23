@@ -19,8 +19,10 @@ public class SwingController2 : MonoBehaviour {
     // Update is called once per frame
     void Update() {
         time += Time.deltaTime;
-        //一定周期で揺れる
-        float s = -Mathf.Cos(time * Mathf.PI / second);
-        this.rb.velocity = new Vector3(0, this.rb.velocity.y, speedZ * s/50f );
+        if (time >= 10f && time <= 30f) {
+            //一定周期で揺れる
+            float s = -Mathf.Cos(time * Mathf.PI / second);
+            this.rb.velocity = new Vector3(0, this.rb.velocity.y, speedZ * s / 50f);
+        }
     }
 }

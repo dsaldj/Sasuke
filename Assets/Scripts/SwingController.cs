@@ -12,8 +12,7 @@ public class SwingController : MonoBehaviour
     private Rigidbody rb;
 
     // Start is called before the first frame update
-    void Start()
-    {
+    void Start(){
         this.rb = GetComponent<Rigidbody>();
     }
 
@@ -21,8 +20,10 @@ public class SwingController : MonoBehaviour
     void Update()
     {
         time += Time.deltaTime;
-        //一定周期で揺れる
-        float s = Mathf.Cos(time * Mathf.PI/second);
-        this.rb.velocity = new Vector3(0, this.rb.velocity.y, speedZ * s / 50);
+        if (time >= 10f && time <= 30f) {
+            //一定周期で揺れる
+            float s = Mathf.Cos(time * Mathf.PI / second);
+            this.rb.velocity = new Vector3(0, this.rb.velocity.y, speedZ * s / 50);
+        }
     }
 }

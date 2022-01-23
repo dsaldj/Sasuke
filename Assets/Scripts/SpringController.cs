@@ -20,7 +20,9 @@ public class SpringController : MonoBehaviour {
     void Update() {
         //一定周期で縦振動させる
         time += Time.deltaTime;
-        float s = Mathf.Cos(time * Mathf.PI / second);
-        this.rb.velocity = new Vector3(0, speedY * s , 0);
+        if (time >= 20f && time <= 30f) {
+            float s = Mathf.Cos(time * Mathf.PI / second);
+            this.rb.velocity = new Vector3(0, speedY * s, 0);
+        }
     }
 }
