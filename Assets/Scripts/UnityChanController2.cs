@@ -38,6 +38,8 @@ public class UnityChanController2 : MonoBehaviour {
 
     // フレーム毎に呼ばれる
     void Update() {
+
+        animator.SetBool("is_dead", true);
         this.delta += Time.deltaTime;
         
         //ゲームオーバーになっていない時
@@ -74,10 +76,15 @@ public class UnityChanController2 : MonoBehaviour {
 
 
             // ゴールしていない時、テキストに残り時間を表示
-            if (is_goal == false) {
+            if (is_goal == false ||is_gameover == false ) {
                 this.time = countdown - delta;
                 this.TimeText.GetComponent<Text>().text = "残り: " + time.ToString("F1") + "秒";
             }
+        }
+        //残り時間が0以下になった場合
+        if(time<= 0f) {
+            is_gameover = true;
+            this.gameoverText.GetComponent<Text>().text = "Game Over";
         }
         //リターンキーで操作説明シーンに遷移
         if (Input.GetKeyDown(KeyCode.Return)) {
@@ -100,7 +107,7 @@ public class UnityChanController2 : MonoBehaviour {
         }
 
         //制限時間内かつゴールに到達できた時
-        if (delta < 30f && other.gameObject.tag == "GoalTag") {
+        if (time >0f && other.gameObject.tag == "GoalTag") {
             is_goal = true;
             //Goalと表示
             this.GoalText.GetComponent<Text>().text = "Clear !!";
@@ -108,10 +115,10 @@ public class UnityChanController2 : MonoBehaviour {
             GetComponent<ParticleSystem>().Play();
         }
         //制限時間オーバーもしくはPlainオブジェクトに接地した時
-        else if (time == 0f|| other.gameObject.tag == "PlainTag") {
+        else if (other.gameObject.tag == "PlainTag") {
             is_gameover = true;
             //テキストにゲームオーバーと表示
-            this.gameoverText.GetComponent<Text>().text = "Game Over ";
+            this.gameoverText.GetComponent<Text>().text = "Game Over";
         }
     }
 }
